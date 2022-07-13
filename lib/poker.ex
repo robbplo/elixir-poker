@@ -4,15 +4,19 @@ defmodule Poker do
   """
 
   @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Poker.hello()
-      :world
+  Compare the scores of two poker hands, and decide who wins.
 
   """
-  def hello do
-    :world
+
+  # @spec rank(String.t(), String.t()) :: {atom(), atom(), atom(), String.t()}
+  def rank(black_hand, white_hand) do
+    # {:ok, :white, :high_card, {"A", "H"}}
+    black_hand
+    |> Hand.parse()
+    |> Hand.rank()
+
+    # find the highest scoring set in a hand
+
+    # compare the two hands
   end
 end
