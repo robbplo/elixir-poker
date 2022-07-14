@@ -57,4 +57,11 @@ defmodule HandTest do
              |> Hand.parse()
              |> Hand.rank()
   end
+
+  test "high card" do
+    assert {:high_card, "A"} ==
+             "7H 4D KS 2D AC"
+             |> Hand.parse()
+             |> Hand.rank()
+  end
 end
