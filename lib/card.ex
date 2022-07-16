@@ -38,13 +38,11 @@ defmodule Card do
   }
 
   def to_value({value, _}), do: @values[value]
-  def to_suit({_, suit}), do: @suits[suit]
+  def to_value(value), do: @values[value]
 
+  def to_suit({_, suit}), do: @suits[suit]
 
   def sort_order(card) do
     to_value(card) * 10 + to_suit(card)
   end
-
-
-
 end

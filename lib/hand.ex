@@ -23,9 +23,10 @@ defmodule Hand do
 
   @doc """
     Finds the highest rank in a hand. Returns a tuple containing the rank as an atom,
-    and the value which decides the winner in case another hand has the same rank.
+    and the set of cards which will determine the winner in case of a tie. The set of cards
+    is ordered from most to least significant.
   """
-  @spec rank(hand()) :: {atom(), Card.value()}
+  @spec rank(hand()) :: {atom(), [Card.value(), ...]}
   def rank(hand) do
     cond do
       value = straight_flush(hand) ->
@@ -53,31 +54,23 @@ defmodule Hand do
         {:pair, value}
 
       true ->
-        {:high_card, hand |> hd() |> elem(0)}
+        {:high_card, high_card(hand)}
     end
   end
 
-  defp pair(hand) do
-    frequencies = value_frequencies(hand)
+  defp high_card(hand) do
+    Enum.map(hand, &elem(&1, 0))
+  end
 
-    if frequencies |> Map.values() |> Enum.sort() == [1, 1, 1, 2] do
-      frequencies
-      |> Map.filter(fn {_, v} -> v == 2 end)
-      |> Map.keys()
-      |> hd()
-    else
-      nil
-    end
+  defp pair(hand) do
+    n_of_a_kind(hand, 2)
   end
 
   defp two_pairs(hand) do
     frequencies = value_frequencies(hand)
 
     if frequencies |> Map.values() |> Enum.sort() == [1, 2, 2] do
-      frequencies
-      |> Map.filter(fn {_, v} -> v == 1 end)
-      |> Map.keys()
-      |> hd()
+      most_significant_frequencies(frequencies)
     else
       nil
     end
@@ -85,7 +78,7 @@ defmodule Hand do
 
   defp straight(hand) do
     if has_straight?(hand) do
-      hand |> hd() |> elem(0)
+      [hand |> hd() |> elem(0)]
     else
       nil
     end
@@ -93,7 +86,7 @@ defmodule Hand do
 
   defp flush(hand) do
     if all_same_suit?(hand) do
-      hand |> hd() |> elem(0)
+      [hand |> hd() |> elem(0)]
     else
       nil
     end
@@ -105,24 +98,17 @@ defmodule Hand do
     found = frequencies |> Map.values() |> Enum.sort() == [2, 3]
 
     if found do
-      frequencies
-      |> Map.filter(fn {_, v} -> v == 3 end)
-      |> Map.keys()
-      |> hd()
+      most_significant_frequencies(frequencies)
     else
       nil
     end
   end
 
   defp n_of_a_kind(hand, count) do
-    frequencies =
-      hand
-      |> value_frequencies()
-      |> Map.filter(fn {_value, frequency} -> frequency == count end)
-      |> Map.keys()
+    frequencies = value_frequencies(hand)
 
-    if length(frequencies) > 0 do
-      hd(frequencies)
+    if count in Map.values(frequencies) do
+      most_significant_frequencies(frequencies)
     else
       nil
     end
@@ -130,7 +116,7 @@ defmodule Hand do
 
   defp straight_flush(hand) do
     if all_same_suit?(hand) and has_straight?(hand) do
-      hand |> hd() |> elem(0)
+      [hand |> hd() |> elem(0)]
     else
       nil
     end
@@ -156,5 +142,14 @@ defmodule Hand do
     hand
     |> Enum.map(&elem(&1, 0))
     |> Enum.frequencies()
+  end
+
+  defp most_significant_frequencies(frequencies) do
+    frequencies
+    |> Map.to_list()
+    |> Enum.sort(fn {card_a, frequency_a}, {card_b, frequency_b} ->
+      {frequency_a, Card.to_value(card_a)} >= {frequency_b, Card.to_value(card_b)}
+    end)
+    |> Enum.map(&elem(&1, 0))
   end
 end
