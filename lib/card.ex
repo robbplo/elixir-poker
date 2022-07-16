@@ -37,11 +37,14 @@ defmodule Card do
     "S" => 4
   }
 
+  @spec to_value(card() | value()) :: integer()
   def to_value({value, _}), do: @values[value]
   def to_value(value), do: @values[value]
 
+  @spec to_suit(card()) :: integer()
   def to_suit({_, suit}), do: @suits[suit]
 
+  @spec sort_order(card()) :: integer()
   def sort_order(card) do
     to_value(card) * 10 + to_suit(card)
   end
