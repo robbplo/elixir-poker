@@ -1,21 +1,17 @@
 # Poker
 
-**TODO: Add description**
 
-## Installation
+Compare the scores of two poker hands, and decide who wins. Returns a tuple containing the winning player, the rank of their hand, and the value of the card which decided the winner. In case of a tie, returns the most significant card for the hand
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `poker` to your list of dependencies in `mix.exs`:
+## Examples
 
-```elixir
-def deps do
-  [
-    {:poker, "~> 0.1.0"}
-  ]
-end
 ```
+iex> Poker.compare("AH KH AS KS AD", "KH AD KS AS KC")
+{:black, :full_house, "A"}
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/poker>.
+iex> Poker.compare("TS TH AC AS 5H", "TC TD AD AH 6D")
+{:white, :two_pairs, "6"}
 
+iex> Poker.compare("AH 8C JS 6H 3S", "AD 8H JD 6S 3H")
+{:tie, :high_card, "A"}
+```
