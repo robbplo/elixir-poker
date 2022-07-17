@@ -7,7 +7,7 @@ defmodule PokerTest do
   end
 
   test "tie straight flush" do
-    assert {:tie, :straight_flush, _} = Poker.compare("KD QD JD TD 9D", "KH QH JH TH 9H")
+    assert {:tie, :straight_flush, "K"} = Poker.compare("KD QD JD TD 9D", "KH QH JH TH 9H")
   end
 
   test "tiebreaker straight flush" do
@@ -31,7 +31,7 @@ defmodule PokerTest do
   end
 
   test "tie flush" do
-    assert {:tie, :flush, _} = Poker.compare("9H 7H 6H 5H 4H", "9C 7C 6C 5C 4C")
+    assert {:tie, :flush, "9"} = Poker.compare("9H 7H 6H 5H 4H", "9C 7C 6C 5C 4C")
   end
 
   test "tiebreaker straight" do
@@ -39,7 +39,7 @@ defmodule PokerTest do
   end
 
   test "tie straight" do
-    assert {:tie, :straight, _} = Poker.compare("8H 7D 6H 5D 4H", "8D 7H 6D 5H 4D")
+    assert {:tie, :straight, "8"} = Poker.compare("8H 7D 6H 5D 4H", "8D 7H 6D 5H 4D")
   end
 
   test "tiebreaker three of a kind" do
@@ -55,7 +55,7 @@ defmodule PokerTest do
   end
 
   test "tie two pairs" do
-    assert {:tie, :two_pairs, _} = Poker.compare("5H 5C 6H 6C AS", "5D 5S 6D 6S AH")
+    assert {:tie, :two_pairs, "6"} = Poker.compare("5H 5C 6H 6C AS", "5D 5S 6D 6S AH")
   end
 
   test "white wins high card" do
@@ -63,7 +63,7 @@ defmodule PokerTest do
   end
 
   test "tie high card" do
-    assert {:tie, :high_card, _} = Poker.compare("KH 4H 3H 8H 9D", "KD 4D 3D 8D 9H")
+    assert {:tie, :high_card, "K"} = Poker.compare("KH 4H 3H 8H 9D", "KD 4D 3D 8D 9H")
   end
 
 end

@@ -1,8 +1,4 @@
 defmodule Poker do
-  @moduledoc """
-  Documentation for `Poker`.
-  """
-
   @rank_scores %{
     straight_flush: 8,
     four_of_a_kind: 7,
@@ -17,10 +13,21 @@ defmodule Poker do
 
   @doc """
   Compare the scores of two poker hands, and decide who wins. Returns a tuple containing the winning player, the rank of their hand,
-  and a list of cards that were used in deciding the winner.
+  and the value of the card which decided the winner. In case of a tie, returns the most significant card for the hand
+
+  ## Examples
+  iex> Poker.compare("AH KH AS KS AD", "KH AD KS AS KC")
+  {:black, :full_house, "A"}
+
+  iex> Poker.compare("TS TH AC AS 5H", "TC TD AD AH 6D")
+  {:white, :two_pairs, "6"}
+
+  iex> Poker.compare("AH 8C JS 6H 3S", "AD 8H JD 6S 3H")
+  {:tie, :high_card, "A"}
+
   """
   @spec compare(String.t(), String.t()) ::
-          {:black | :white, atom(), [Card.value(), ...]} | {:tie, nil, nil}
+          {:black | :white | :tie, Hand.rank(), Card.value()}
   def compare(black_hand, white_hand) do
     {black_rank, black_cards} =
       black_hand
@@ -53,14 +60,12 @@ defmodule Poker do
             {:white, white_rank, tiebreaker_card}
 
           _ ->
-            {:tie, black_rank, nil}
+            {:tie, black_rank, hd(black_cards)}
         end
     end
   end
 
-  defp tiebreaker(black_cards, white_cards) do
-    Enum.zip(black_cards, white_cards) |> do_tiebreaker()
-  end
+  defp tiebreaker(black_cards, white_cards), do: Enum.zip(black_cards, white_cards) |> do_tiebreaker()
 
   defp do_tiebreaker([]), do: {nil, nil}
 

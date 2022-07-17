@@ -4,6 +4,20 @@ defmodule Hand do
   """
   @type hand() :: [Card.card(), ...]
 
+  @typedoc """
+    Possible ranks for a hand of poker.
+  """
+  @type rank() ::
+          :high_card
+          | :pair
+          | :two_pairs
+          | :three_of_a_kind
+          | :straight
+          | :flush
+          | :full_house
+          | :four_of_a_kind
+          | :straight_flush
+
   @doc """
     Parses input into card tuples and sorts them by value.
 
@@ -22,11 +36,16 @@ defmodule Hand do
   end
 
   @doc """
-    Finds the highest rank in a hand. Returns a tuple containing the rank as an atom,
+    Finds the highest rank in a hand. Returns a tuple containing the rank of the hand
     and the set of cards which will determine the winner in case of a tie. The set of cards
     is ordered from most to least significant.
+
+    ## Examples
+
+    iex> Hand.rank([{"A", "H"}, {"A", "C"}, {"5", "C"}, {"4", "S"}, {"2", "S"}])
+    {:pair, ["A", "5", "4", "2"]}
   """
-  @spec rank(hand()) :: {atom(), [Card.value(), ...]}
+  @spec rank(hand()) :: {rank(), [Card.value(), ...]}
   def rank(hand) do
     cond do
       value = straight_flush(hand) ->
